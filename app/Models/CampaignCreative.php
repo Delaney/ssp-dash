@@ -11,6 +11,7 @@ class CampaignCreative extends Model
 
     protected $fillable = [
         'campaign_id',
+        'filename',
         'upload_path'
     ];
 }

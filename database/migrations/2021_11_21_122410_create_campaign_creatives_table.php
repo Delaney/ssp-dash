@@ -15,6 +15,9 @@ class CreateCampaignCreativesTable extends Migration
     {
         Schema::create('campaign_creatives', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('campaign_id');
+            $table->string('filename');
+            $table->string('upload_path');
             $table->timestamps();
         });
     }
