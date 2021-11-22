@@ -22,7 +22,7 @@ class Campaign extends Model
         'date_to' => 'datetime',
     ];
 
-    public function campaign_creatives(){
+    public function creatives(){
         return $this->hasMany(CampaignCreative::class);
     }
 }

@@ -2,16 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campaign;
+use App\Models\{
+    Campaign,
+    CampaignCreative
+};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{
+    DB,
+    Validator
+};
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class CampaignController extends Controller
 {
     public function index(Request $request)
     {
-        return Campaign::all();
+        $campaigns = Campaign::with('creatives')
+            ->get()
+            ->each(function ($creative) {
+                $creative->creatives->map(function ($image) {
+                    $image->link = getenv('APP_URL') . '/' . $image->upload_path;
+                });
+            });
+        return $campaigns;
     }
 
     public function create(Request $request)
@@ -24,20 +38,16 @@ class CampaignController extends Controller
                 'date_to'      => 'required|date',
                 'total_budget' => 'required|numeric',
                 'daily_budget' => 'required|numeric',
-                'creatives.*'  => 'required|mimes:jpg,jpeg,png,bmp|max:20000'
-            ],
-            [
-                'creatives.*.required' => 'Please upload an image',
-                'creatives.*.mimes' => 'Only jpeg,png and bmp images are allowed',
-                'creatives.*.max' => 'Sorry! Maximum allowed size for an image is 20MB',
+                'creatives'    => 'required'
             ]
         );
 
-        if ($validator->fails())
+        if ($validator->fails()) {
             return response()->json([
                 'error' => $validator->errors()->first(),
                 'message' => 'invalid_input',
             ], 400);
+        }
 
         $now = Carbon::now();
         $date_from = Carbon::parse($request->input('date_from'));
@@ -50,6 +60,8 @@ class CampaignController extends Controller
             ], 400);
         }
 
+        DB::beginTransaction();
+
         $campaign = Campaign::create([
             'name'         => trim($request->input('name')),
             'date_from'    => $date_from,
@@ -58,9 +70,40 @@ class CampaignController extends Controller
             'daily_budget' => $request->input('daily_budget'),
         ]);
 
+        $creatives = $request->file('creatives');
+
+        foreach ($creatives as $file) {
+            if ((in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png','gif','bmp']))) {
+                $name = time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+                $fileName = Str::of($name)->basename('.' . $file->getClientOriginalExtension());
+    
+                $creative              = new CampaignCreative;      
+                $creative->campaign_id = $campaign->id;
+                $creative->filename    = $fileName;
+                $creative->upload_path = 'storage/' . $file->storeAs('creatives', $name, 'public');
+                $creative->extension   = $file->getClientOriginalExtension();
+    
+                $creative->save();
+            }
+        }
+
+        DB::commit();
+
         return response()->json([
             'success' => true,
             'campaign' => $campaign->id
         ]);
+    }
+
+    public function get($id)
+    {
+        $campaign = Campaign::find($id);
+        if (!$campaign) {
+            return response()->json([
+                'error' => 'Campaign does not exist',
+                'message' => 'invalid_input',
+            ], 404);
+        }
+        return $campaign;
     }
 }

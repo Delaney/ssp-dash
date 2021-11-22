@@ -21,5 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'campaigns'], function () {
     Route::get('/', 'CampaignController@index');
+    Route::get('/{id}', 'CampaignController@get');
     Route::post('/create', 'CampaignController@create');
 });

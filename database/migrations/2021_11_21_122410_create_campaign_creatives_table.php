@@ -18,6 +18,7 @@ class CreateCampaignCreativesTable extends Migration
             $table->bigInteger('campaign_id');
             $table->string('filename');
             $table->string('upload_path');
+            $table->string('extension');
             $table->timestamps();
         });
     }
