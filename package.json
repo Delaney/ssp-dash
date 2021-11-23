@@ -27,6 +27,8 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "vue-router": "^3.5.3"
+        "moment": "^2.29.1",
+        "vue-router": "^3.5.3",
+        "vue2-datepicker": "^3.10.3"
     }
 }
