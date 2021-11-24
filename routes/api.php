@@ -23,4 +23,5 @@ Route::group(['prefix' => 'campaigns'], function () {
     Route::get('/', 'CampaignController@index');
     Route::get('/{id}', 'CampaignController@get');
     Route::post('/create', 'CampaignController@create');
+    Route::post('/edit', 'CampaignController@edit');
 });

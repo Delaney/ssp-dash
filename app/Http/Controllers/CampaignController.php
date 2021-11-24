@@ -109,4 +109,53 @@ class CampaignController extends Controller
         }
         return $campaign;
     }
+
+    public function edit(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'id'           => 'required|exists:campaigns',
+                'name'         => 'required',
+                'date_from'    => 'required|date',
+                'date_to'      => 'required|date',
+                'total_budget' => 'required|numeric',
+                'daily_budget' => 'required|numeric',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'invalid_input',
+                'message' => $validator->errors()->first(),
+            ], 400);
+        }
+
+        $now = Carbon::now();
+        $date_from = Carbon::parse($request->input('date_from'));
+        $date_to = Carbon::parse($request->input('date_to'));
+
+        $from_formatted = $date_from->format('Y-m-d');
+        $now_formatted = $date_from->format('Y-m-d');
+
+        if ($date_from && ($from_formatted != $now_formatted) && ($date_from < $now)) {
+            return response()->json([
+                'error' => 'invalid_input',
+                'message' => 'The start date cannot be before the current time',
+            ], 400);
+        }
+
+        Campaign::find($request->input('id'))
+            ->update([
+                'name'         => trim($request->input('name')),
+                'date_from'    => $date_from,
+                'date_to'      => $date_to,
+                'total_budget' => $request->input('total_budget'),
+                'daily_budget' => $request->input('daily_budget'),
+            ]);
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
 }

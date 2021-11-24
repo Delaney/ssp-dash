@@ -9,115 +9,6 @@
                             Campaigns
                         </p>
                     </div>
-                    <!-- <div class="grid grid-cols-12 gap-6 border-b-2 pb-5">
-                        <div
-                            class="
-                                col-span-12
-                                sm:col-span-12
-                                md:col-span-8
-                                lg:col-span-8
-                                xxl:col-span-8
-                            "
-                        >
-                            <div
-                                class="
-                                    grid grid-cols-1
-                                    gap-2
-                                    sm:grid-cols-2
-                                    md:grid-cols-4
-                                    lg:grid-cols-4
-                                    xl:grid-cols-4
-                                    mt-3
-                                "
-                            >
-                                <div class="p-4">
-                                    <p class="text-xl font-bold">RM 45,941</p>
-                                    <p
-                                        class="
-                                            text-xs
-                                            font-semibold
-                                            text-gray-400
-                                        "
-                                    >
-                                        Overdue
-                                    </p>
-                                </div>
-                                <div class="p-4">
-                                    <p class="text-xl font-bold">RM 37,500</p>
-                                    <p
-                                        class="
-                                            text-xs
-                                            font-semibold
-                                            text-gray-400
-                                        "
-                                    >
-                                        Total Outstanding
-                                    </p>
-                                </div>
-                                <div class="p-4">
-                                    <p class="text-xl font-bold">RM 9,200</p>
-                                    <p
-                                        class="
-                                            text-xs
-                                            font-semibold
-                                            text-gray-400
-                                        "
-                                    >
-                                        In Process
-                                    </p>
-                                </div>
-                                <div class="p-4">
-                                    <p class="text-xl font-bold">RM 5,700</p>
-                                    <p
-                                        class="
-                                            text-xs
-                                            font-semibold
-                                            text-gray-400
-                                        "
-                                    >
-                                        Paid Today
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            class="
-                                col-span-12
-                                sm:col-span-12
-                                md:col-span-4
-                                lg:col-span-4
-                                xxl:col-span-4
-                            "
-                        >
-                            <div class="p-4">
-                                <p class="text-sm text-gray-400">
-                                    Outstanding Revenue
-                                </p>
-                                <div class="shadow w-full bg-gray-100 mt-2">
-                                    <div
-                                        class="
-                                            bg-indigo-600
-                                            text-xs
-                                            leading-none
-                                            py-1
-                                            text-center text-white
-                                        "
-                                        style="width: 55%"
-                                    ></div>
-                                </div>
-                                <p
-                                    class="
-                                        text-xs
-                                        font-semibold
-                                        text-gray-400
-                                        mt-2
-                                    "
-                                >
-                                    RM 45,941 Overdue
-                                </p>
-                            </div>
-                        </div>
-                    </div> -->
                     <div
                         class="
                             grid grid-cols-1
@@ -203,7 +94,7 @@
 export default {
 	methods: {
 		goToCreate: function() {
-			this.$router.push('/create');
+			this.$router.push('create');
 		},
 
 		goToList: function() {

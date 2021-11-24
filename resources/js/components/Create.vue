@@ -18,7 +18,8 @@
 		<div class="bg-gradient-to-b from-blue-800 to-blue-600 h-96"></div>
 		<div class="max-w-5xl mx-auto px-6 sm:px-6 lg:px-8 mb-12">
 			<div class="bg-gray-900 w-full shadow rounded p-8 sm:p-12 -mt-72">
-				<p class="text-3xl font-bold leading-7 text-center text-white">Create New Campaign</p>
+				<p class="text-3xl font-bold leading-7 text-center text-white" v-if="!campaign">Create New Campaign</p>
+				<p class="text-3xl font-bold leading-7 text-center text-white" v-else>Edit Campaign</p>
 				<form action="" method="post" @submit.prevent="process" enctype="multipart/form-data" id="createForm">
 					<div class="md:flex items-center mt-12">
 						<div class="w-full flex flex-col">
@@ -46,7 +47,7 @@
 							<input type="number" v-model="dailyBudget" class="leading-none text-gray-50 p-3 focus:outline-none focus:border-blue-700 mt-4 border-0 bg-gray-800 rounded"/>
 						</div>
 					</div>
-					<div>
+					<div v-if="!campaign">
 						<div class="w-full flex flex-col mt-8">
 							<label class="font-semibold leading-none text-gray-300">Creative Images</label>
 							<div class='flex items-center justify-center w-full mt-4'>
@@ -85,8 +86,11 @@
 						</p>
 					</div>
 					<div class="flex items-center justify-center w-full">
-						<button class="mt-9 font-semibold leading-none text-white py-4 px-10 bg-blue-700 rounded hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
+						<button v-if="!campaign" class="mt-9 font-semibold leading-none text-white py-4 px-10 bg-blue-700 rounded hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
 							Create
+						</button>
+						<button v-else class="mt-9 font-semibold leading-none text-white py-4 px-10 bg-blue-700 rounded hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
+							Update
 						</button>
 					</div>
 				</form>
@@ -133,7 +137,7 @@ export default {
 			} else if (parseFloat(this.dailyBudget) > parseFloat(this.totalBudget)) {
 				this.errors.push('Daily Budget cannot be greater than total budget');
 			}
-			if (!this.creatives.length) {
+			if (!this.campaign && !this.creatives.length) {
 				this.errors.push('At least one image must be uploaded');
 			}
 
@@ -150,10 +154,14 @@ export default {
 			for( let x = 0; x < this.creatives.length; x++ ){
 				formData.append(`creatives[${x}]`, this.creatives[x]);
 			}
+			if (this.campaign) {
+				formData.append('id', this.campaign.id);
+			}
 
 			const _this = this;
+			let url = this.campaign ? '/api/campaigns/edit' : '/api/campaigns/create';
 
-			axios.post('/api/campaigns/create',
+			axios.post(url,
 				formData,
 				{
 					headers: {
@@ -161,10 +169,11 @@ export default {
 					}
 				}).then(function(res) {
 					if (res.data.success) {
-						_this.messages.push("Success!");
+						_this.messages.push("Success! Redirecting...");
 						setTimeout(function() {
 							_this.messages = [];
-						}, 5000);
+							_this.$router.push({ 'path': '/list' });
+						}, 3000);
 						_this.clearForm();
 					}
 				}).catch(function(err) {
@@ -189,12 +198,19 @@ export default {
 		}
 	},
 	props: {
-		id: {
-			type: Number,
+		campaign: {
+			type: Object,
 			required: false
 		}
 	},
 	mounted() {
+		if (this.campaign) {
+			this.name = this.campaign.name;
+			this.dateFrom = this.campaign.date_from;
+			this.dateTo = this.campaign.date_to;
+			this.dailyBudget = this.campaign.daily_budget;
+			this.totalBudget = this.campaign.total_budget;
+		};
 	}
 }
 </script>

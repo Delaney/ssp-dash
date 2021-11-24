@@ -5,7 +5,6 @@
  */
 
 import VueRouter from 'vue-router';
-import App from './components/App';
 import Create from './components/Create';
 import List from './components/List';
 
@@ -31,9 +30,10 @@ Vue.use(VueRouter);
 const router = new VueRouter({
     mode: 'history',
     routes: [
-        { path: '/', component: App },
+        { path: '/', component: List },
         { path: '/create', component: Create },
         { path: '/list', component: List },
+        { path: "/edit", name:"edit", component: Create, props: true}
     ]
 });
 

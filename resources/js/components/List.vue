@@ -16,45 +16,53 @@
 			</section>
 		</div>
 		<div class="mx-auto mb-12">
-			<table class="items-center w-full bg-transparent border-collapse">
+			<table v-if="campaigns.length" class="items-center w-full table-auto bg-transparent border-collapse">
 				<thead>
 					<tr>
-						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-white text-black border-blue-700">Name</th>
-						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-white text-black border-blue-700">Budget</th>
-						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-white text-black border-blue-700">Start Date</th>
-						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-white text-black border-blue-700">End Date</th>
-						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-white text-black border-blue-700"></th>
-						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-white text-black border-blue-700"></th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700">Name</th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700">Budget</th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700">Start Date</th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700">End Date</th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700">Created At</th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700"></th>
+						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700"></th>
 					</tr>
 				</thead>
 
 				<tbody>
 					<tr v-for="campaign in campaigns" :key="campaign.id">
-						<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+						<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
 							<span class="font-bold text-black">{{ campaign.name }}</span>
 						</th>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
 							${{ campaign.total_budget }} USD (${{ campaign.daily_budget }} daily)
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
 							<i class="fas fa-circle text-orange-500 mr-2"></i>{{ campaign.date_from | formatDate}}
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
 							<i class="fas fa-circle text-orange-500 mr-2"></i>{{ campaign.date_to | formatDate}}
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
+							<i class="fas fa-circle text-orange-500 mr-2"></i>{{ campaign.created_at | createdAt}}
+						</td>
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
 							<button @click="show(campaign.id)" class="w-full font-semibold leading-none text-white py-4 px-10 bg-blue-700 rounded hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
 								View Creatives
 							</button>
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-							<button class="w-full font-semibold leading-none text-white py-4 px-10 bg-black rounded focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
+							<button @click="edit(campaign.id)" class="w-full font-semibold leading-none text-white py-4 px-10 bg-black rounded focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
 								Edit
 							</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
+
+			<div v-else class="flex justify-center mt-32">
+				<h4 class="">No Campaigns. <router-link class="text-blue-400" to="/create">Create your first campaign.</router-link></h4>
+			</div>
 		</div>
 
 		<CreativesModal v-if="showCreatives" @close="showCreatives = false" :creatives="currentCreatives" />
@@ -145,14 +153,28 @@ export default {
 				this.currentCreatives = campaign.creatives;
 				this.showCreatives = true;
 			}
+		},
+
+		edit: function(id) {
+			const campaign  = this.campaigns.find(o => o.id == id);
+			if (campaign) {
+				this.$router.push({ name: 'edit', params: {campaign: campaign }});
+			}
 		}
 	},
+
 	mounted() {
 		this.getCampaigns();
 	},
+
 	filters: {
 		formatDate: (date) => {
 			if (moment(date)) return moment(date).format("YYYY-MM-DD");
+			else return date;
+		},
+
+		createdAt: (date) => {
+			if (moment(date)) return moment(date).format("YYYY-MM-DD h:ma");
 			else return date;
 		}
 	}
