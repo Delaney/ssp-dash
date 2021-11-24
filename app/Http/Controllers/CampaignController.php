@@ -44,8 +44,8 @@ class CampaignController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'error' => $validator->errors()->first(),
-                'message' => 'invalid_input',
+                'error' => 'invalid_input',
+                'message' => $validator->errors()->first(),
             ], 400);
         }
 
@@ -53,10 +53,13 @@ class CampaignController extends Controller
         $date_from = Carbon::parse($request->input('date_from'));
         $date_to = Carbon::parse($request->input('date_to'));
 
-        if ($date_from && ($date_from < $now)) {
+        $from_formatted = $date_from->format('Y-m-d');
+        $now_formatted = $date_from->format('Y-m-d');
+
+        if ($date_from && ($from_formatted != $now_formatted) && ($date_from < $now)) {
             return response()->json([
-                'error' => 'The start date cannot be before the current time',
-                'message' => 'invalid_input',
+                'error' => 'invalid_input',
+                'message' => 'The start date cannot be before the current time',
             ], 400);
         }
 
@@ -100,8 +103,8 @@ class CampaignController extends Controller
         $campaign = Campaign::find($id);
         if (!$campaign) {
             return response()->json([
-                'error' => 'Campaign does not exist',
-                'message' => 'invalid_input',
+                'error' => 'invalid_input',
+                'message' => 'Campaign does not exist',
             ], 404);
         }
         return $campaign;

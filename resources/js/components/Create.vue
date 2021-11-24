@@ -19,7 +19,7 @@
 		<div class="max-w-5xl mx-auto px-6 sm:px-6 lg:px-8 mb-12">
 			<div class="bg-gray-900 w-full shadow rounded p-8 sm:p-12 -mt-72">
 				<p class="text-3xl font-bold leading-7 text-center text-white">Create New Campaign</p>
-				<form action="" method="post" @submit.prevent="process" enctype="multipart/form-data">
+				<form action="" method="post" @submit.prevent="process" enctype="multipart/form-data" id="createForm">
 					<div class="md:flex items-center mt-12">
 						<div class="w-full flex flex-col">
 							<label class="font-semibold leading-none text-gray-300">Campaign Name</label>
@@ -74,6 +74,16 @@
 							</ul>
 						</p>
 					</div>
+
+					<div class="my-8 text-green-600">
+						<p v-if="messages.length">
+							<ul>
+								<li v-for="(message, index) in messages" :key="index">
+									<b>{{ message }}</b>
+								</li>
+							</ul>
+						</p>
+					</div>
 					<div class="flex items-center justify-center w-full">
 						<button class="mt-9 font-semibold leading-none text-white py-4 px-10 bg-blue-700 rounded hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
 							Create
@@ -95,20 +105,17 @@ export default {
 	components: { DatePicker },
     data() {
 		return {
-			name: 'Good News',
-			// dateFrom: null,
-			// dateTo: null,
-			// totalBudget: 0,
-			// dailyBudget: 0,
-			dateFrom: "2021-11-23",
-			dateTo: "2021-11-27",
-			totalBudget: 5000,
-			dailyBudget: 400,
+			name: '',
+			dateFrom: null,
+			dateTo: null,
+			totalBudget: 0,
+			dailyBudget: 0,
 			pastDate: (date) => {
 				return moment(date).isBefore(moment().format('YYYY MM DD'));
 			},
 			creatives: [],
 			errors: [],
+			messages: [],
 		};
     },
 	methods: {
@@ -144,6 +151,8 @@ export default {
 				formData.append(`creatives[${x}]`, this.creatives[x]);
 			}
 
+			const _this = this;
+
 			axios.post('/api/campaigns/create',
 				formData,
 				{
@@ -151,14 +160,32 @@ export default {
 						'Content-Type': 'multipart/form-data'
 					}
 				}).then(function(res) {
-					console.log(res);
+					if (res.data.success) {
+						_this.messages.push("Success!");
+						setTimeout(function() {
+							_this.messages = [];
+						}, 5000);
+						_this.clearForm();
+					}
 				}).catch(function(err) {
-					console.log(err);
+					if (err.response.status) _this.errors.push(err.response.data.message);
+					else _this.errors.push("Something went wrong. Please try again.")
 				});
 		},
 
 		handleFileUpload: function(event) {
 			this.creatives = event.target.files;
+		},
+
+		clearForm: function() {
+			this.name = '';
+			this.dateFrom = null;
+			this.dateTo = null;
+			this.totalBudget = 0;
+			this.dailyBudget = 0;
+			this.creatives = [];
+			const form = document.getElementById('createForm');
+			form.reset();
 		}
 	},
 	props: {
