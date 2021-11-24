@@ -16,7 +16,11 @@
 			</section>
 		</div>
 		<div class="mx-auto mb-12">
-			<table v-if="campaigns.length" class="items-center w-full table-auto bg-transparent border-collapse">
+			<div v-if="loading" class="flex justify-center mt-32">
+				<h4 class="text-4xl">Loading...</h4>
+			</div>
+
+			<table v-else-if="campaigns.length" class="items-center w-full table-auto bg-transparent border-collapse">
 				<thead>
 					<tr>
 						<th class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 font-semibold text-left bg-white text-black border-blue-700">Name</th>
@@ -31,27 +35,27 @@
 
 				<tbody>
 					<tr v-for="campaign in campaigns" :key="campaign.id">
-						<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
+						<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4">
 							<span class="font-bold text-black">{{ campaign.name }}</span>
 						</th>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4">
 							${{ campaign.total_budget }} USD (${{ campaign.daily_budget }} daily)
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
-							<i class="fas fa-circle text-orange-500 mr-2"></i>{{ campaign.date_from | formatDate}}
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4">
+							{{ campaign.date_from | formatDate}}
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
-							<i class="fas fa-circle text-orange-500 mr-2"></i>{{ campaign.date_to | formatDate}}
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4">
+							{{ campaign.date_to | formatDate}}
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
-							<i class="fas fa-circle text-orange-500 mr-2"></i>{{ campaign.created_at | createdAt}}
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4">
+							{{ campaign.created_at | createdAt}}
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4 w-56">
 							<button @click="show(campaign.id)" class="w-full font-semibold leading-none text-white py-4 px-10 bg-blue-700 rounded hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
 								View Creatives
 							</button>
 						</td>
-						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4">
+						<td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs text-left p-4 w-56">
 							<button @click="edit(campaign.id)" class="w-full font-semibold leading-none text-white py-4 px-10 bg-black rounded focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none">
 								Edit
 							</button>

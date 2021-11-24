@@ -22,7 +22,10 @@ class CampaignController extends Controller
             ->get()
             ->each(function ($creative) {
                 $creative->creatives->map(function ($image) {
-                    $image->link = getenv('APP_URL') . '/' . $image->upload_path;
+                    $link = strpos('http', $image->upload_path) === false ?
+                        $image->upload_path :
+                        getenv('APP_URL') . '/' . $image->upload_path;
+                    $image->link = $link;
                 });
             });
         return $campaigns;
@@ -76,16 +79,16 @@ class CampaignController extends Controller
         $creatives = $request->file('creatives');
 
         foreach ($creatives as $file) {
-            if ((in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png','gif','bmp']))) {
+            if ((in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif', 'bmp']))) {
                 $name = time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
                 $fileName = Str::of($name)->basename('.' . $file->getClientOriginalExtension());
-    
-                $creative              = new CampaignCreative;      
+
+                $creative              = new CampaignCreative;
                 $creative->campaign_id = $campaign->id;
                 $creative->filename    = $fileName;
                 $creative->upload_path = 'storage/' . $file->storeAs('creatives', $name, 'public');
                 $creative->extension   = $file->getClientOriginalExtension();
-    
+
                 $creative->save();
             }
         }

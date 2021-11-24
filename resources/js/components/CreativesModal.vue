@@ -5,9 +5,10 @@
                 <div class="modal-wrapper">
                     <div class="modal-container" id="mac">
 
-                        <div class="modal-header">
+                        <div class="modal-header text-2xl bg-gray-500 p-4 rounded-sm text-white text-center flex justify-between">
                             <slot name="header">
-                                <h2 class="text-2xl bg-gray-700 p-4 rounded-sm text-white text-center">CREATIVES</h2>
+                                <h2 class="text-2xl">CREATIVES</h2>
+                                <span class="cursor-pointer" @click="$emit('close')">&times;</span>
                             </slot>
                         </div>
 
@@ -45,6 +46,9 @@ export default {
             required: true,
         }
     },
+    computed: {
+        link: function(val) {}
+    }
 }
 </script>
 
