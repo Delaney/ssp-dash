@@ -7,8 +7,8 @@
 					<div class="px-5 xl:px-12 py-6 flex w-full items-center">
 						<!-- Nav Links -->
 						<ul class="md:flex px-4 mx-auto font-semibold font-heading space-x-12 self-center">
-							<li><a class="hover:text-gray-200" href="#">Create</a></li>
-							<li><a class="hover:text-gray-200" href="#">List</a></li>
+							<li><router-link to="/create" class="hover:text-gray-200" href="#">Create</router-link></li>
+							<li><router-link to="/list" class="hover:text-gray-200" href="#">List</router-link></li>
 						</ul>
 					</div>
 				</nav>

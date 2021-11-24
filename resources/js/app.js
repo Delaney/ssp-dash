@@ -7,7 +7,7 @@
 import VueRouter from 'vue-router';
 import App from './components/App';
 import Create from './components/Create';
-// import List from './components/List';
+import List from './components/List';
 
 require('./bootstrap');
 
@@ -33,7 +33,7 @@ const router = new VueRouter({
     routes: [
         { path: '/', component: App },
         { path: '/create', component: Create },
-        { path: '/list', component: App },
+        { path: '/list', component: List },
     ]
 });
 

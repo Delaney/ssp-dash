@@ -53,9 +53,9 @@ class CampaignController extends Controller
         $date_from = Carbon::parse($request->input('date_from'));
         $date_to = Carbon::parse($request->input('date_to'));
 
-        if ($date_from && ($date_from > $now)) {
+        if ($date_from && ($date_from < $now)) {
             return response()->json([
-                'error' => 'The start date cannot be past the current time',
+                'error' => 'The start date cannot be before the current time',
                 'message' => 'invalid_input',
             ], 400);
         }
