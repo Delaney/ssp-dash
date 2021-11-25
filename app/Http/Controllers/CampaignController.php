@@ -88,6 +88,7 @@ class CampaignController extends Controller
         $creatives = $request->file('creatives');
 
         foreach ($creatives as $file) {
+            // Check that uploaded file is an image and save
             if ((in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif', 'bmp']))) {
                 $name = time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
                 $fileName = Str::of($name)->basename('.' . $file->getClientOriginalExtension());
