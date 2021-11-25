@@ -33,18 +33,11 @@ class CampaignController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name'         => 'required',
-                'date_from'    => 'required|date',
-                'date_to'      => 'required|date',
-                'total_budget' => 'required|numeric',
-                'daily_budget' => 'required|numeric',
-                'creatives'    => 'required'
-            ]
+        $input_validator = new \App\Validators\InputValidator(
+            $request
         );
 
+        $validator = $input_validator->validate();
         if ($validator->fails()) {
             return response()->json([
                 'error' => 'invalid_input',
@@ -55,6 +48,8 @@ class CampaignController extends Controller
         $now = Carbon::now();
         $date_from = Carbon::parse($request->input('date_from'));
         $date_to = Carbon::parse($request->input('date_to'));
+        $total_budget = $request->input('total_budget');
+        $daily_budget = $request->input('daily_budget');
 
         $from_formatted = $date_from->format('Y-m-d');
         $now_formatted = $date_from->format('Y-m-d');
@@ -63,6 +58,20 @@ class CampaignController extends Controller
             return response()->json([
                 'error' => 'invalid_input',
                 'message' => 'The start date cannot be before the current time',
+            ], 400);
+        }
+
+        if ($date_from > $date_to) {
+            return response()->json([
+                'error' => 'invalid_input',
+                'message' => 'The start date cannot be after than the end date',
+            ], 400);
+        }
+
+        if ($daily_budget > $total_budget) {
+            return response()->json([
+                'error' => 'invalid_input',
+                'message' => 'Daily Budget cannot be greater than total budget',
             ], 400);
         }
 
@@ -97,7 +106,7 @@ class CampaignController extends Controller
 
         return response()->json([
             'success' => true,
-            'campaign' => $campaign->id
+            'id' => $campaign->id
         ]);
     }
 
@@ -115,18 +124,11 @@ class CampaignController extends Controller
 
     public function edit(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'id'           => 'required|exists:campaigns',
-                'name'         => 'required',
-                'date_from'    => 'required|date',
-                'date_to'      => 'required|date',
-                'total_budget' => 'required|numeric',
-                'daily_budget' => 'required|numeric',
-            ]
+        $input_validator = new \App\Validators\InputValidator(
+            $request
         );
 
+        $validator = $input_validator->validate(true);
         if ($validator->fails()) {
             return response()->json([
                 'error' => 'invalid_input',
@@ -137,6 +139,8 @@ class CampaignController extends Controller
         $now = Carbon::now();
         $date_from = Carbon::parse($request->input('date_from'));
         $date_to = Carbon::parse($request->input('date_to'));
+        $total_budget = $request->input('total_budget');
+        $daily_budget = $request->input('daily_budget');
 
         $from_formatted = $date_from->format('Y-m-d');
         $now_formatted = $date_from->format('Y-m-d');
@@ -148,8 +152,23 @@ class CampaignController extends Controller
             ], 400);
         }
 
-        Campaign::find($request->input('id'))
-            ->update([
+        if ($date_from > $date_to) {
+            return response()->json([
+                'error' => 'invalid_input',
+                'message' => 'The start date cannot be after than the end date',
+            ], 400);
+        }
+
+        if ($daily_budget > $total_budget) {
+            return response()->json([
+                'error' => 'invalid_input',
+                'message' => 'Daily Budget cannot be greater than total budget',
+            ], 400);
+        }
+
+        $campaign = Campaign::find($request->input('id'));
+        if ($campaign) {
+            $campaign->update([
                 'name'         => trim($request->input('name')),
                 'date_from'    => $date_from,
                 'date_to'      => $date_to,
@@ -157,8 +176,14 @@ class CampaignController extends Controller
                 'daily_budget' => $request->input('daily_budget'),
             ]);
 
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
         return response()->json([
-            'success' => true
+            'success' => false
         ]);
+
     }
 }
